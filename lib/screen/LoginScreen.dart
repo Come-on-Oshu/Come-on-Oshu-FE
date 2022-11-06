@@ -69,6 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.deepPurpleAccent, borderRadius: BorderRadius.circular(10)),
               child: TextButton(
                 onPressed: () {
+                  //TODO: api 호출 및 연동
                   print(useridcontroller.text);
                   print(userpwcontroller.text);
                 },
