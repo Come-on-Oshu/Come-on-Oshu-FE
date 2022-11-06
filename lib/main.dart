@@ -38,3 +38,20 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+// import 'package:oshucome/screen/DetailInformationScreen.dart';
+// import 'package:oshucome/screen/EventListScreen.dart';
+// import 'package:oshucome/screen/LoginScreen.dart';
+// import 'package:oshucome/screen/MyPageScreen.dart';
+//
+// void main() => runApp(MyApp());
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: LoginScreen()
+//     );
+//   }
+// }
