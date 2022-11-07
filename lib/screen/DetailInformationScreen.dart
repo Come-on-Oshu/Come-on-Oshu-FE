@@ -1,21 +1,41 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../model/EventDetailInfo.dart';
 
 class DetailInformationScreen extends StatefulWidget {
+
+  EventDetailInfo EI;
+  DetailInformationScreen({required this.EI}); //이전 화면으로부터 행사 상세 정보를 요청받는다.
+
   @override
   _DetailInformationScreenState createState() => _DetailInformationScreenState();
 }
 
 class _DetailInformationScreenState extends State<DetailInformationScreen> {
-  //dummy data
-  //TODO: api 통해 받아온 데이터로 변경
-  String eventTitle = '히사이시조 영화 음악 콘서트';
-  String eventDuration = '2022년 5월 1일';
-  String eventOrganization = '위클래식';
-  String eventLocation = '대전 유성구 대학로 99번지';
+
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    String eventTitle = widget.EI.EventName;
+    String eventDuration = "";
+    if(widget.EI.stDate == widget.EI.edDate) {
+      eventDuration = widget.EI.stDate;
+    }else {
+      eventDuration = widget.EI.stDate + " ~ \n" + widget.EI.edDate;
+    }
+
+    String eventOrganization = widget.EI.Organization;
+    String eventLocation = widget.EI.address;
 
     return SafeArea(//SafeArea위젯은 기기의 상단 노티바 부분, 하단 영역을 침범하지 않는 안전한 영역 잡아주는 위젯
         child: Scaffold(
@@ -94,7 +114,7 @@ class _DetailInformationScreenState extends State<DetailInformationScreen> {
                             SizedBox(height:5),
                             Container( // TODO: 지도 구현
                               color: Colors.black,
-                              height: MediaQuery.of(context).size.height*0.34,
+                              height: MediaQuery.of(context).size.height*0.3,
                               width: MediaQuery.of(context).size.width,
                             ),
                           ],
@@ -106,7 +126,9 @@ class _DetailInformationScreenState extends State<DetailInformationScreen> {
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:Colors.deepPurpleAccent),
-                              onPressed: () {  },
+                              onPressed: () {
+                                _launchInBrowser(Uri.parse(widget.EI.SiteUrl));
+                              },
                               child: Row(
                                 children: [
                                   Icon(Icons.ad_units),
@@ -122,7 +144,31 @@ class _DetailInformationScreenState extends State<DetailInformationScreen> {
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:Colors.deepPurpleAccent),
-                              onPressed: () {  },
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: true, // 바깥 영역 터치시 닫을지 여부
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: Container(
+                                          child: Image.network(
+                                            widget.EI.ImgUrl,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                        insetPadding: const  EdgeInsets.fromLTRB(0,80,0, 80),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('확인'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                );
+                              },
                               child: Row(
                                 children: [
                                   Icon(Icons.account_balance_wallet_rounded),
