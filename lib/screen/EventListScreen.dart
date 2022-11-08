@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:oshucome/screen/DetailInformationScreen.dart';
 import 'package:transition/transition.dart';
 import 'package:http/http.dart' as http;
@@ -79,16 +80,18 @@ class _EventListScreenState extends State<EventListScreen> {
             ),
             style: ElevatedButton.styleFrom(
                 backgroundColor:Colors.deepPurpleAccent),
-            onPressed: () {
+            onPressed: () async {
               String eventid = 'PF186264';
-              _fetchEI(eventid).whenComplete(() {
-                return Navigator.push(
-                    context,
-                    Transition(
-                        child: DetailInformationScreen(EI: Event_detail_info,),
-                        transitionEffect: TransitionEffect.RIGHT_TO_LEFT)
-                );
-              });
+              dynamic id = await SessionManager().get("usertoken");
+              print(id);
+              // _fetchEI(eventid).whenComplete(() {
+              //   return Navigator.push(
+              //       context,
+              //       Transition(
+              //           child: DetailInformationScreen(EI: Event_detail_info,),
+              //           transitionEffect: TransitionEffect.RIGHT_TO_LEFT)
+              //   );
+              // });
             },
           ),
         ),

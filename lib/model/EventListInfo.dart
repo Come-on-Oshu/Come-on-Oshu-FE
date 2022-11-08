@@ -7,6 +7,7 @@ class EventInformation {
   late String stDate;
   late String edDate;
   late String Organization;
+  late String address;
 
   EventInformation({
     required this.EventID,
@@ -16,6 +17,7 @@ class EventInformation {
     required this.stDate,
     required this.edDate,
     required this.Organization,
+    required this.address
 });
 
   EventInformation.fromMap(Map<String, dynamic> map)
@@ -25,7 +27,8 @@ class EventInformation {
         ImgUrl = map['ImgUrl'],
         stDate = map['stDate'],
         edDate = map['edDate'],
-        Organization = map['Organization'];
+        Organization = map['Organization'],
+        address = map['address'];
 
 
   EventInformation.fromJson(Map<String, dynamic> json)
@@ -35,5 +38,6 @@ class EventInformation {
         ImgUrl = json['ImgUrl'],
         stDate = json['stDate'],
         edDate = json['edDate'],
-        Organization = json['Organization'];
+        Organization = json['Organization'],
+        address = json['address'];
 }
