@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_session_manager/flutter_session_manager.dart';
-import 'package:oshucome/screen/DetailInformationScreen.dart';
+import 'package:oshucome/screen/EventDetailInfo.dart';
 import 'package:transition/transition.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -30,7 +29,7 @@ class _EventListScreenState extends State<EventListScreen> {
 
   bool isLoading =false; //api로 부터 데이터를 가져오고 있는지에 대한 상태 변수
 
-  //api 호출 함수
+  //Event detail info api 호출 함수
   //api 호출로 받은 응답(행사 상세 정보)을 model에 저장한다.
   _fetchEI(String eventid) async {
     setState(() {
@@ -80,18 +79,17 @@ class _EventListScreenState extends State<EventListScreen> {
             ),
             style: ElevatedButton.styleFrom(
                 backgroundColor:Colors.deepPurpleAccent),
-            onPressed: () async {
+            onPressed: () {
+              //TODO: 선택한 행사 ID로 채워넣기
               String eventid = 'PF186264';
-              dynamic id = await SessionManager().get("usertoken");
-              print(id);
-              // _fetchEI(eventid).whenComplete(() {
-              //   return Navigator.push(
-              //       context,
-              //       Transition(
-              //           child: DetailInformationScreen(EI: Event_detail_info,),
-              //           transitionEffect: TransitionEffect.RIGHT_TO_LEFT)
-              //   );
-              // });
+              _fetchEI(eventid).whenComplete(() {
+                return Navigator.push(
+                    context,
+                    Transition(
+                        child: EventDetailInfoScreen(EI: Event_detail_info,),
+                        transitionEffect: TransitionEffect.RIGHT_TO_LEFT)
+                );
+              });
             },
           ),
         ),
