@@ -1,13 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../model/EventDetailInfo.dart';
+
 class MyPageScreen extends StatefulWidget {
+
+  List<EventDetailInfo> EventList;
+  String username;
+  MyPageScreen({required this.EventList, required this.username});
+
   @override
   _MyPageScreenState createState() => _MyPageScreenState();
 }
 
 class _MyPageScreenState extends State<MyPageScreen> {
-  String username = '김유진';
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                username + '님의 관심 행사 목록',
+                widget.username + '님의 관심 행사 목록',
                 style: TextStyle(color: Colors.deepPurple, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Container(

@@ -1,5 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:oshucome/model/api_adapter.dart';
+import 'package:transition/transition.dart';
+
+import '../model/EventDetailInfo.dart';
+
 
 import 'MyPageScreen.dart';
 
@@ -24,9 +33,54 @@ class _MapScreenState extends State<MapScreen>{
 
   late MenuType _selection;
 
+  List<EventDetailInfo> event_list = [];
+
+  String username = 'default';
+
+  EventDetailInfo Event_detail_info = EventDetailInfo(
+      EventID: "default",
+      EventName: "default",
+      isFestival: 0,
+      ImgUrl: "default",
+      stDate: "default",
+      edDate: "default",
+      Organization: "default",
+      address: "default",
+      SiteUrl: "default");
+
   void _onMapCreated(GoogleMapController controller){
     mapController = controller;
   }
+
+  _fetchMyPage(String userid) async {
+    //api 요청 변수
+    final queryParameters = {
+      'userid':userid
+    };
+    final uri = Uri.http('192.168.137.1:8000', '/oshu/MyPage', queryParameters);
+
+    final req = http.Request("GET", uri);
+    final streamedResponse = await req.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if(response.statusCode == 200) {
+      setState(() {
+        var responseBody = utf8.decode(response.bodyBytes);
+        final parsed = json.decode(responseBody);
+
+        username = parsed['username'];
+
+        int length = parsed['InterestEventList'].length;
+        for(int i = 0; i < length; i++) {
+          Event_detail_info = EventDetailInfo.fromJson(parsed['InterestEventList'][i]);
+          event_list.add(Event_detail_info);
+        }
+      });
+    }else {
+      throw Exception('failed to load data');
+    }
+  }
+
   @override
   Widget build(BuildContext context){
     Size screenSize = MediaQuery.of(context).size;
@@ -60,11 +114,16 @@ class _MapScreenState extends State<MapScreen>{
             IconButton(
               color: Colors.deepPurpleAccent,
               icon: Icon(Icons.account_circle), 
-              onPressed: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyPageScreen()),
-                );
+              onPressed: () async {
+                dynamic userid = await SessionManager().get("userid");
+                _fetchMyPage(userid).whenComplete(() {
+                  return Navigator.push(
+                      context,
+                      Transition(
+                          child: MyPageScreen(EventList: event_list, username: username,),
+                          transitionEffect: TransitionEffect.RIGHT_TO_LEFT)
+                  );
+                });
             })
           ],
         ),
