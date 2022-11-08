@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:oshucome/screen/EventListScreen.dart';
 
+import 'MainMapScreen.dart';
+
 
 class LoginScreen extends StatefulWidget {
 
@@ -53,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            const SizedBox(height: 70),
             Padding( //main image
               padding: const EdgeInsets.only(top: 60.0),
               child: Center(
@@ -62,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Image.asset('images/festival.jpg')),
               ),
             ),
+            SizedBox(height: 20),
             Padding( //user id field
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: SizedBox(
@@ -102,9 +106,6 @@ class _LoginScreenState extends State<LoginScreen> {
               child: TextButton(
                 onPressed: () async {
                   _fetchLogin(useridcontroller.text, userpwcontroller.text).whenComplete(() async {
-                  });
-
-                  _fetchLogin(useridcontroller.text, userpwcontroller.text).whenComplete(() async {
 
                     if(LoginStatus == 1) { //로그인 성공시
                       print(LoginMessage);
@@ -113,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       return Navigator.push(
                           context,
                           Transition(
-                              child: EventListScreen(),
+                              child: MapScreen(),
                               transitionEffect: TransitionEffect.RIGHT_TO_LEFT)
                       );
                     }else if(LoginStatus == 0) { //아이디가 없는 경우
