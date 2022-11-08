@@ -14,9 +14,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final useridcontroller = TextEditingController();
-  final userpwcontroller = TextEditingController();
-  String userToken = "";
+  final useridcontroller = TextEditingController(); //user 입력 id 가져오는 controller
+  final userpwcontroller = TextEditingController(); //user 입력 pw 가져오는 controller
+
+  String userID = "";
+  int LoginStatus = -1;
+  String LoginMessage = "";
 
   _fetchLogin(String userid, String userpw) async {
 
@@ -36,28 +39,24 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         var responseBody = utf8.decode(response.bodyBytes);
         final parsed = json.decode(responseBody);
-        userToken = parsed['Token'];
+        LoginStatus = parsed['status'];
+        LoginMessage = parsed['message'];
       });
     }else {
       throw Exception('failed to load data');
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('FeCo In Daejeon'),
-        backgroundColor: Colors.deepPurpleAccent,
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Padding( //main image
               padding: const EdgeInsets.only(top: 60.0),
               child: Center(
-                child: Container(
+                child: SizedBox(
                     width: 300,
                     height: 200,
                     child: Image.asset('images/festival.jpg')),
@@ -101,29 +100,37 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: BoxDecoration(
                   color: Colors.deepPurpleAccent, borderRadius: BorderRadius.circular(10)),
               child: TextButton(
-                onPressed: () {
-                  //TODO: api 호출 및 연동
+                onPressed: () async {
                   _fetchLogin(useridcontroller.text, userpwcontroller.text).whenComplete(() async {
-                    print(userToken);
-                    var sessionManager = SessionManager();
-                    sessionManager.set("usertoken", userToken);
-                    return Navigator.push(
-                        context,
-                        Transition(
-                            child: EventListScreen(),
-                            transitionEffect: TransitionEffect.RIGHT_TO_LEFT)
-                    );
+                  });
+
+                  _fetchLogin(useridcontroller.text, userpwcontroller.text).whenComplete(() async {
+
+                    if(LoginStatus == 1) { //로그인 성공시
+                      print(LoginMessage);
+                      var sessionManager = SessionManager();
+                      sessionManager.set('userid', useridcontroller.text);
+                      return Navigator.push(
+                          context,
+                          Transition(
+                              child: EventListScreen(),
+                              transitionEffect: TransitionEffect.RIGHT_TO_LEFT)
+                      );
+                    }else if(LoginStatus == 0) { //아이디가 없는 경우
+                    }else if(LoginStatus == 2) { //비밀번호가 일치하지 않을때
+                    }
+                    print(LoginMessage);
                   });
                 },
-                child: Text(
+                child: const Text(
                   'Login',
                   style: TextStyle(color: Colors.white, fontSize: 25),
                 ),
               ),
             ),
-            SizedBox(height:15),
+            const SizedBox(height:15),
             TextButton(
-              child: Text(
+              child: const Text(
                 '로그인 없이 사용하기',
                 style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 20),
               ),
