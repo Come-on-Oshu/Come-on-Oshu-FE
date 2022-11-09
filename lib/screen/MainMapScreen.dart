@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:oshucome/model/api_adapter.dart';
 import 'package:transition/transition.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../model/EventDetailInfo.dart';
 
@@ -32,6 +33,18 @@ class _MapScreenState extends State<MapScreen>{
   final LatLng _center = const LatLng(36.3667, 127.3443);
 
   late MenuType _selection;
+  final List<Marker> _markers = [];
+
+  @override
+  void initState(){
+    super.initState();
+    _markers.add(Marker(
+      markerId: MarkerId("1"),
+      draggable: true,
+      onTap: () => print("Marker!"),
+      position: _center
+    ));
+  }
 
   List<EventDetailInfo> event_list = [];
 
@@ -86,6 +99,10 @@ class _MapScreenState extends State<MapScreen>{
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
+    BorderRadiusGeometry radius = BorderRadius.only(
+      topLeft: Radius.circular(24.0),
+      topRight: Radius.circular(24.0),
+    );
 
     return SafeArea(
       child: Scaffold(
@@ -127,12 +144,25 @@ class _MapScreenState extends State<MapScreen>{
             })
           ],
         ),
-        body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: 13.0,
+        body: SlidingUpPanel(
+          minHeight: height * 0.04,
+          maxHeight: height * 0.845,
+          color: Colors.deepPurpleAccent,
+          panel: Center(
+            child: Text("here List Add pls"),
           ),
+          body: GoogleMap(
+            mapType: MapType.normal,
+            markers: Set.from(_markers),
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: _center,
+              zoom: 13.0,
+            ),
+            onCameraMove: (_) {},
+            myLocationButtonEnabled: false,
+          ),
+          borderRadius: radius,
         ),
       ),
     );
